@@ -3,9 +3,9 @@ import { useAuth } from '../context/AuthContext';
 
 /**
  * Wraps a route so only authenticated users can access it.
- * Optionally restrict to a specific role: <ProtectedRoute role="Admin" />
+ * Optionally restrict to specific roles: <ProtectedRoute allowedRoles={['Admin', 'Staff']} />
  */
-export default function ProtectedRoute({ children, role }) {
+export default function ProtectedRoute({ children, allowedRoles }) {
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children, role }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (role && user?.role !== role) {
+  if (allowedRoles && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

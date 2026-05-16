@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bot, User, Send, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assistantService } from '../services/assistantService';
+import ReactMarkdown from 'react-markdown';
 
 export default function AIAssistantPage() {
   const [messages, setMessages] = useState([]);
@@ -130,9 +131,15 @@ export default function AIAssistantPage() {
                   boxShadow: msg.role === 'user' ? 'none' : '0 1px 2px rgba(0,0,0,0.05)',
                   fontSize: '0.9375rem',
                   lineHeight: 1.5,
-                  whiteSpace: 'pre-wrap'
+                  whiteSpace: msg.role === 'user' ? 'pre-wrap' : 'normal'
                 }}>
-                  {msg.content}
+                  {msg.role === 'assistant' && !msg.isError ? (
+                    <div className="markdown-body">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -168,6 +175,7 @@ export default function AIAssistantPage() {
               outline: 'none', fontSize: '0.9375rem', background: '#f8fafc',
               transition: 'all 0.2s'
             }}
+            autoFocus
             onFocus={(e) => { e.target.style.borderColor = '#6366f1'; e.target.style.background = '#ffffff'; e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.1)'; }}
             onBlur={(e) => { e.target.style.borderColor = '#cbd5e1'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
           />

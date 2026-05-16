@@ -111,7 +111,7 @@ export default function LoginPage() {
 
     try {
       await login(form.email.trim(), form.password);
-      navigate(from, { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       const msg =
         err?.response?.data?.message ||

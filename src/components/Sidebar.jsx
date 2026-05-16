@@ -7,12 +7,12 @@ export default function Sidebar() {
 
   const links = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/products', icon: Package, label: 'Products' },
-    { to: '/categories', icon: Tags, label: 'Categories', allowedRoles: ['Admin', 'Staff'] },
+    { to: '/products', icon: Package, label: 'Products', allowedRoles: ['Admin'] },
+    { to: '/categories', icon: Tags, label: 'Categories', allowedRoles: ['Admin'] },
     { to: '/stock', icon: ArrowRightLeft, label: 'Stock Management', allowedRoles: ['Admin', 'Staff'] },
     { to: '/orders', icon: FileText, label: 'Orders & Invoices' },
     { to: '/staff', icon: Users, label: 'Staff Management', allowedRoles: ['Admin'] },
-    { to: '/assistant', icon: Bot, label: 'AI Assistant' },
+    { to: '/assistant', icon: Bot, label: 'AI Assistant', allowedRoles: ['Admin'] },
   ];
 
   return (

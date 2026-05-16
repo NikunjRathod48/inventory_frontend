@@ -22,11 +22,11 @@ export default function App() {
 
           {/* Protected Routes inside AppLayout */}
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/categories" element={<ProtectedRoute allowedRoles={['Admin', 'Manager']}><CategoriesPage /></ProtectedRoute>} />
-            <Route path="/stock" element={<ProtectedRoute allowedRoles={['Admin', 'Manager']}><StockPage /></ProtectedRoute>} />
-            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><DashboardPage /></ProtectedRoute>} />
+            <Route path="/products" element={<ProtectedRoute allowedRoles={['Admin']}><ProductsPage /></ProtectedRoute>} />
+            <Route path="/categories" element={<ProtectedRoute allowedRoles={['Admin']}><CategoriesPage /></ProtectedRoute>} />
+            <Route path="/stock" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><StockPage /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><OrdersPage /></ProtectedRoute>} />
             <Route path="/staff" element={<ProtectedRoute allowedRoles={['Admin']}><StaffPage /></ProtectedRoute>} />
           </Route>
 

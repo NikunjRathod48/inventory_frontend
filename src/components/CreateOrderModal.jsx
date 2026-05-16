@@ -207,7 +207,7 @@ export default function CreateOrderModal({ onClose, onComplete }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '0.375rem', border: '1px solid #e2e8f0' }}>
                           <button onClick={() => updateQuantity(item.productid, -1)} style={{ padding: '0.25rem', border: 'none', background: 'none', cursor: 'pointer', color: '#475569' }}><Minus size={14}/></button>
-                          <span style={{ fontSize: '0.875rem', fontWeight: 600, width: '24px', textAlign: 'center' }}>{item.quantity}</span>
+                          <span style={{ fontSize: '0.875rem', fontWeight: 600, width: '24px', textAlign: 'center', color: item.quantity > (item.stock?.quantity || 0) ? '#dc2626' : '#0f172a' }}>{item.quantity}</span>
                           <button onClick={() => updateQuantity(item.productid, 1)} style={{ padding: '0.25rem', border: 'none', background: 'none', cursor: 'pointer', color: '#475569' }}><Plus size={14}/></button>
                         </div>
                         <div style={{ fontWeight: 700, fontSize: '0.875rem', width: '60px', textAlign: 'right' }}>
@@ -232,8 +232,19 @@ export default function CreateOrderModal({ onClose, onComplete }) {
                 <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>₹{totalAmount.toFixed(2)}</span>
               </div>
               
-              <button onClick={handleSubmit} disabled={loading || cart.length === 0} className="btn-primary" style={{ padding: '1rem' }}>
-                {loading ? <div className="spinner" /> : 'Complete Checkout'}
+              {cart.some(item => item.quantity > (item.stock?.quantity || 0)) && (
+                <div style={{ color: '#dc2626', fontSize: '0.8125rem', marginBottom: '1rem', textAlign: 'center', fontWeight: 600, background: '#fef2f2', padding: '0.5rem', borderRadius: '0.375rem' }}>
+                  Insufficient stock for one or more items.
+                </div>
+              )}
+              
+              <button 
+                onClick={handleSubmit} 
+                disabled={loading || cart.length === 0 || cart.some(item => item.quantity > (item.stock?.quantity || 0))} 
+                className="btn-primary" 
+                style={{ padding: '1rem', opacity: (loading || cart.length === 0 || cart.some(item => item.quantity > (item.stock?.quantity || 0))) ? 0.6 : 1 }}
+              >
+                {loading ? 'Processing...' : 'Complete Checkout'}
               </button>
             </div>
           </div>

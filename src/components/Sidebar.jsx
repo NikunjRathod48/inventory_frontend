@@ -8,8 +8,8 @@ export default function Sidebar() {
   const links = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/products', icon: Package, label: 'Products' },
-    { to: '/categories', icon: Tags, label: 'Categories', allowedRoles: ['Admin', 'Manager'] },
-    { to: '/stock', icon: ArrowRightLeft, label: 'Stock Management', allowedRoles: ['Admin', 'Manager'] },
+    { to: '/categories', icon: Tags, label: 'Categories', allowedRoles: ['Admin', 'Staff'] },
+    { to: '/stock', icon: ArrowRightLeft, label: 'Stock Management', allowedRoles: ['Admin', 'Staff'] },
     { to: '/orders', icon: FileText, label: 'Orders & Invoices' },
     { to: '/staff', icon: Users, label: 'Staff Management', allowedRoles: ['Admin'] },
     { to: '/assistant', icon: Bot, label: 'AI Assistant' },

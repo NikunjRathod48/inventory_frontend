@@ -3,8 +3,10 @@ import { Plus, Edit2, Trash2, Tags } from 'lucide-react';
 import { categoriesService } from '../services/categoriesService';
 import CategoryModal from '../components/CategoryModal';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import { useToast } from '../context/ToastContext';
 
 export default function CategoriesPage() {
+  const { toast } = useToast();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,12 +32,18 @@ export default function CategoriesPage() {
   }, []);
 
   const handleSaveCategory = async (payload, id) => {
-    if (id) {
-      await categoriesService.update(id, payload);
-    } else {
-      await categoriesService.create(payload);
+    try {
+      if (id) {
+        await categoriesService.update(id, payload);
+        toast.success('Category Updated', `Category updated successfully.`);
+      } else {
+        await categoriesService.create(payload);
+        toast.success('Category Created', 'New category added successfully.');
+      }
+      fetchCategories();
+    } catch (err) {
+      toast.error('Save Failed', err.response?.data?.message || 'Failed to save category.');
     }
-    fetchCategories();
   };
 
   const handleDeleteClick = (id) => {
@@ -48,8 +56,9 @@ export default function CategoriesPage() {
       await categoriesService.delete(deleteModalState.id);
       setDeleteModalState({ isOpen: false, id: null, loading: false });
       fetchCategories();
+      toast.success('Category Deleted', 'Category removed successfully.');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete category');
+      toast.error('Delete Failed', err.response?.data?.message || 'Failed to delete category.');
       setDeleteModalState(prev => ({ ...prev, loading: false }));
     }
   };

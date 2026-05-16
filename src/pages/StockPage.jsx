@@ -3,8 +3,10 @@ import { Layers, ArrowRightLeft, Clock, Search, AlertCircle, TrendingDown } from
 import { stockService } from '../services/stockService';
 import AdjustStockModal from '../components/AdjustStockModal';
 import StockHistoryModal from '../components/StockHistoryModal';
+import { useToast } from '../context/ToastContext';
 
 export default function StockPage() {
+  const { toast } = useToast();
   const [stocks, setStocks] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -55,25 +57,31 @@ export default function StockPage() {
 
   const handleUpdateThreshold = async (productId, currentThreshold) => {
     const newThreshold = window.prompt('Enter new low stock warning threshold:', currentThreshold);
-    if (newThreshold !== null) {
-      const parsed = parseInt(newThreshold, 10);
-      if (!isNaN(parsed) && parsed >= 0) {
-        try {
-          await stockService.updateThreshold(productId, parsed);
-          fetchStock();
-        } catch (err) {
-          alert('Failed to update threshold');
-        }
-      } else {
-        alert('Please enter a valid positive number');
-      }
+    if (newThreshold === null) return;
+    const parsed = parseInt(newThreshold, 10);
+    if (isNaN(parsed) || parsed < 0) {
+      toast.warning('Invalid Input', 'Please enter a valid positive number.');
+      return;
+    }
+    try {
+      await stockService.updateThreshold(productId, parsed);
+      fetchStock();
+      toast.success('Threshold Updated', `Low stock threshold set to ${parsed}.`);
+    } catch (err) {
+      toast.error('Update Failed', 'Failed to update threshold.');
     }
   };
 
   const handleAdjustSave = async (payload) => {
-    await stockService.adjust(payload);
-    fetchStock();
-    fetchAlerts();
+    try {
+      await stockService.adjust(payload);
+      fetchStock();
+      fetchAlerts();
+      toast.success('Stock Adjusted', 'Stock level updated successfully.');
+    } catch (err) {
+      toast.error('Adjustment Failed', err.response?.data?.message || 'Failed to adjust stock.');
+      throw err; // re-throw so modal can handle its own state
+    }
   };
 
   const totalPages = Math.ceil(total / limit) || 1;

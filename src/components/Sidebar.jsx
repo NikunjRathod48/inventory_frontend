@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, Tags, ArrowRightLeft, FileText, Bot, Users } from 'lucide-react';
+import { LayoutDashboard, Package, Tags, ArrowRightLeft, FileText, Bot, Users, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar() {
@@ -11,8 +11,9 @@ export default function Sidebar() {
     { to: '/categories', icon: Tags, label: 'Categories', allowedRoles: ['Admin'] },
     { to: '/stock', icon: ArrowRightLeft, label: 'Stock Management', allowedRoles: ['Admin', 'Staff'] },
     { to: '/orders', icon: FileText, label: 'Orders & Invoices' },
-    { to: '/staff', icon: Users, label: 'Staff Management', allowedRoles: ['Admin'] },
-    { to: '/assistant', icon: Bot, label: 'AI Assistant', allowedRoles: ['Admin'] },
+    { to: '/staff',     icon: Users,           label: 'Staff Management', allowedRoles: ['Admin'] },
+    { to: '/reports',   icon: FileSpreadsheet, label: 'Reports',          allowedRoles: ['Admin'] },
+    { to: '/assistant', icon: Bot,             label: 'AI Assistant',     allowedRoles: ['Admin'] },
   ];
 
   return (

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Plus, Search, FileBadge, XCircle } from 'lucide-react';
 import { ordersService } from '../services/ordersService';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import CreateOrderModal from '../components/CreateOrderModal';
 import InvoiceModal from '../components/InvoiceModal';
 
@@ -15,6 +16,7 @@ export default function OrdersPage() {
   const limit = 10;
 
   const { isAdmin, isManager } = useAuth();
+  const { toast } = useToast();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -45,8 +47,9 @@ export default function OrdersPage() {
     try {
       await ordersService.cancel(id);
       fetchOrders();
+      toast.success('Order Cancelled', 'Stock has been returned to inventory.');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to cancel order');
+      toast.error('Cancel Failed', err.response?.data?.message || 'Failed to cancel order.');
     }
   };
 

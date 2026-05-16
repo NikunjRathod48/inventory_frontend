@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import ToastContainer from './components/ToastContainer';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/AppLayout';
 import LoginPage from './pages/LoginPage';
@@ -11,12 +13,14 @@ import StockPage from './pages/StockPage';
 import StaffPage from './pages/StaffPage';
 import OrdersPage from './pages/OrdersPage';
 import AIAssistantPage from './pages/AIAssistantPage';
+import ReportsPage from './pages/ReportsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
         <Routes>
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
@@ -29,7 +33,8 @@ export default function App() {
             <Route path="/categories" element={<ProtectedRoute allowedRoles={['Admin']}><CategoriesPage /></ProtectedRoute>} />
             <Route path="/stock" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><StockPage /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><OrdersPage /></ProtectedRoute>} />
-            <Route path="/staff" element={<ProtectedRoute allowedRoles={['Admin']}><StaffPage /></ProtectedRoute>} />
+            <Route path="/staff"     element={<ProtectedRoute allowedRoles={['Admin']}><StaffPage /></ProtectedRoute>} />
+            <Route path="/reports"   element={<ProtectedRoute allowedRoles={['Admin']}><ReportsPage /></ProtectedRoute>} />
             <Route path="/assistant" element={<ProtectedRoute allowedRoles={['Admin']}><AIAssistantPage /></ProtectedRoute>} />
           </Route>
 
@@ -37,7 +42,9 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </AuthProvider>
+        </AuthProvider>
+        <ToastContainer />
+      </ToastProvider>
     </BrowserRouter>
   );
 }

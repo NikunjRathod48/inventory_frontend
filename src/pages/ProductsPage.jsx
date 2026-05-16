@@ -3,8 +3,10 @@ import { Plus, Search, Edit2, Trash2, Box } from 'lucide-react';
 import { productsService } from '../services/productsService';
 import ProductModal from '../components/ProductModal';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import { useToast } from '../context/ToastContext';
 
 export default function ProductsPage() {
+  const { toast } = useToast();
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -42,12 +44,18 @@ export default function ProductsPage() {
   }, [page, search]);
 
   const handleSaveProduct = async (payload, id) => {
-    if (id) {
-      await productsService.update(id, payload);
-    } else {
-      await productsService.create(payload);
+    try {
+      if (id) {
+        await productsService.update(id, payload);
+        toast.success('Product Updated', `"${payload.productname}" updated successfully.`);
+      } else {
+        await productsService.create(payload);
+        toast.success('Product Created', `"${payload.productname}" added to inventory.`);
+      }
+      fetchProducts();
+    } catch (err) {
+      toast.error('Save Failed', err.response?.data?.message || 'Failed to save product.');
     }
-    fetchProducts();
   };
 
   const handleDeleteClick = (id) => {
@@ -60,8 +68,9 @@ export default function ProductsPage() {
       await productsService.delete(deleteModalState.id);
       setDeleteModalState({ isOpen: false, id: null, loading: false });
       fetchProducts();
+      toast.success('Product Deleted', 'Product has been deactivated.');
     } catch (err) {
-      alert('Failed to delete product');
+      toast.error('Delete Failed', err.response?.data?.message || 'Failed to delete product.');
       setDeleteModalState(prev => ({ ...prev, loading: false }));
     }
   };

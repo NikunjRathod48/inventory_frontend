@@ -10,6 +10,7 @@ import CategoriesPage from './pages/CategoriesPage';
 import StockPage from './pages/StockPage';
 import StaffPage from './pages/StaffPage';
 import OrdersPage from './pages/OrdersPage';
+import AIAssistantPage from './pages/AIAssistantPage';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/stock" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><StockPage /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute allowedRoles={['Admin', 'Staff']}><OrdersPage /></ProtectedRoute>} />
             <Route path="/staff" element={<ProtectedRoute allowedRoles={['Admin']}><StaffPage /></ProtectedRoute>} />
+            <Route path="/assistant" element={<AIAssistantPage />} />
           </Route>
 
           {/* Default redirect */}

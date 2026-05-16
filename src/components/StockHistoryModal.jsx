@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Clock } from 'lucide-react';
 import { stockService } from '../services/stockService';
 

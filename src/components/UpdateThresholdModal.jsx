@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AlertCircle, X } from 'lucide-react';
 
 export default function UpdateThresholdModal({ product, currentThreshold, onClose, onSave }) {

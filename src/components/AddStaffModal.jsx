@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, UserPlus, Eye, EyeOff } from 'lucide-react';
 
 export default function AddStaffModal({ onClose, onSave }) {

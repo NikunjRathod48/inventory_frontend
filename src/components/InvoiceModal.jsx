@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Printer } from 'lucide-react';
 
 export default function InvoiceModal({ order, onClose }) {

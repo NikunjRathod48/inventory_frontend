@@ -3,6 +3,7 @@ import { Layers, ArrowRightLeft, Clock, Search, AlertCircle, TrendingDown } from
 import { stockService } from '../services/stockService';
 import AdjustStockModal from '../components/AdjustStockModal';
 import StockHistoryModal from '../components/StockHistoryModal';
+import UpdateThresholdModal from '../components/UpdateThresholdModal';
 import { useToast } from '../context/ToastContext';
 
 export default function StockPage() {
@@ -19,6 +20,7 @@ export default function StockPage() {
   // Modal states
   const [adjustModalProduct, setAdjustModalProduct] = useState(null);
   const [historyModalProduct, setHistoryModalProduct] = useState(null);
+  const [thresholdModalProduct, setThresholdModalProduct] = useState(null);
 
   // Overview stats
   const [alerts, setAlerts] = useState({ lowStockCount: 0, outOfStockCount: 0 });
@@ -55,20 +57,14 @@ export default function StockPage() {
     return () => clearTimeout(delayDebounceFn);
   }, [page, search, lowStockOnly]);
 
-  const handleUpdateThreshold = async (productId, currentThreshold) => {
-    const newThreshold = window.prompt('Enter new low stock warning threshold:', currentThreshold);
-    if (newThreshold === null) return;
-    const parsed = parseInt(newThreshold, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      toast.warning('Invalid Input', 'Please enter a valid positive number.');
-      return;
-    }
+  const handleSaveThreshold = async (productId, newThreshold) => {
     try {
-      await stockService.updateThreshold(productId, parsed);
+      await stockService.updateThreshold(productId, newThreshold);
       fetchStock();
-      toast.success('Threshold Updated', `Low stock threshold set to ${parsed}.`);
+      toast.success('Threshold Updated', `Low stock threshold set to ${newThreshold}.`);
     } catch (err) {
       toast.error('Update Failed', 'Failed to update threshold.');
+      throw err;
     }
   };
 
@@ -89,7 +85,7 @@ export default function StockPage() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: '100%' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Layers size={24} color="#4f46e5" />
@@ -124,8 +120,8 @@ export default function StockPage() {
       )}
 
       {/* Toolbar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-        <div style={{ position: 'relative', width: '300px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
           <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           <input
             type="text"
@@ -202,7 +198,7 @@ export default function StockPage() {
                       <td style={tdStyle}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                           <span style={{ color: '#64748b' }}>{threshold}</span>
-                          <button onClick={() => handleUpdateThreshold(s.productid, threshold)} style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+                          <button onClick={() => setThresholdModalProduct({ ...p, currentThreshold: threshold })} style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
                             Edit
                           </button>
                         </div>
@@ -270,6 +266,15 @@ export default function StockPage() {
         <StockHistoryModal
           product={historyModalProduct}
           onClose={() => setHistoryModalProduct(null)}
+        />
+      )}
+
+      {thresholdModalProduct && (
+        <UpdateThresholdModal
+          product={thresholdModalProduct}
+          currentThreshold={thresholdModalProduct.currentThreshold}
+          onClose={() => setThresholdModalProduct(null)}
+          onSave={handleSaveThreshold}
         />
       )}
     </div>

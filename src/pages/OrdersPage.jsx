@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import CreateOrderModal from '../components/CreateOrderModal';
 import InvoiceModal from '../components/InvoiceModal';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -20,6 +21,7 @@ export default function OrdersPage() {
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [cancelModalState, setCancelModalState] = useState({ isOpen: false, id: null, loading: false });
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -42,14 +44,20 @@ export default function OrdersPage() {
     return () => clearTimeout(delayDebounceFn);
   }, [page, search]);
 
-  const handleCancel = async (id) => {
-    if (!window.confirm('Are you sure you want to cancel this order? Stock will be returned to inventory.')) return;
+  const handleCancelClick = (id) => {
+    setCancelModalState({ isOpen: true, id, loading: false });
+  };
+
+  const confirmCancel = async () => {
+    setCancelModalState(prev => ({ ...prev, loading: true }));
     try {
-      await ordersService.cancel(id);
+      await ordersService.cancel(cancelModalState.id);
+      setCancelModalState({ isOpen: false, id: null, loading: false });
       fetchOrders();
       toast.success('Order Cancelled', 'Stock has been returned to inventory.');
     } catch (err) {
       toast.error('Cancel Failed', err.response?.data?.message || 'Failed to cancel order.');
+      setCancelModalState(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -68,7 +76,7 @@ export default function OrdersPage() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: '100%' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <FileText size={24} color="#4f46e5" />
@@ -86,8 +94,8 @@ export default function OrdersPage() {
       </div>
 
       {/* Toolbar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-        <div style={{ position: 'relative', width: '300px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
           <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           <input
             type="text"
@@ -161,7 +169,7 @@ export default function OrdersPage() {
                         </button>
                         {(isAdmin || isManager) && o.status !== 'CANCELLED' && (
                           <button 
-                            onClick={() => handleCancel(o.orderid)}
+                            onClick={() => handleCancelClick(o.orderid)}
                             style={{ background: '#fef2f2', color: '#dc2626', border: 'none', padding: '0.375rem', borderRadius: '0.375rem', cursor: 'pointer' }}
                             title="Cancel Order"
                           >
@@ -196,6 +204,16 @@ export default function OrdersPage() {
       {/* Modals placeholders */}
       {isAddModalOpen && <CreateOrderModal onClose={() => setIsAddModalOpen(false)} onComplete={(newOrder) => { fetchOrders(); setSelectedInvoice(newOrder); }} />}
       {selectedInvoice && <InvoiceModal order={selectedInvoice} onClose={() => setSelectedInvoice(null)} />}
+      
+      {cancelModalState.isOpen && (
+        <DeleteConfirmModal
+          title="Cancel Order"
+          message="Are you sure you want to cancel this order? Stock will be returned to inventory. This cannot be undone."
+          onConfirm={confirmCancel}
+          onCancel={() => setCancelModalState({ isOpen: false, id: null, loading: false })}
+          loading={cancelModalState.loading}
+        />
+      )}
     </div>
   );
 }

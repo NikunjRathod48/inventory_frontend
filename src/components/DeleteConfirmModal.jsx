@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AlertTriangle, X } from 'lucide-react';
 
 export default function DeleteConfirmModal({ title, message, onConfirm, onCancel, loading }) {
@@ -12,7 +13,7 @@ export default function DeleteConfirmModal({ title, message, onConfirm, onCancel
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onCancel]);
 
-  return (
+  return createPortal(
     <div 
       onClick={onCancel}
       style={{
@@ -73,6 +74,7 @@ export default function DeleteConfirmModal({ title, message, onConfirm, onCancel
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

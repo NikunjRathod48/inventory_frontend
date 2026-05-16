@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ShoppingCart, Search, Plus, Minus, Trash2 } from 'lucide-react';
 import { productsService } from '../services/productsService';
 import { ordersService } from '../services/ordersService';
@@ -86,7 +87,7 @@ export default function CreateOrderModal({ onClose, onComplete }) {
     }
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -251,6 +252,7 @@ export default function CreateOrderModal({ onClose, onComplete }) {
 
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

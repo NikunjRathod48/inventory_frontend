@@ -44,7 +44,7 @@ export default function StockHistoryModal({ product, onClose }) {
     );
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -148,7 +148,8 @@ export default function StockHistoryModal({ product, onClose }) {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

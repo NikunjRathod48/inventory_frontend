@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Save } from 'lucide-react';
 
 export default function CategoryModal({ category, onClose, onSave }) {
@@ -42,7 +43,7 @@ export default function CategoryModal({ category, onClose, onSave }) {
     }
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -132,6 +133,7 @@ export default function CategoryModal({ category, onClose, onSave }) {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

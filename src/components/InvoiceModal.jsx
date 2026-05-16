@@ -30,7 +30,7 @@ export default function InvoiceModal({ order, onClose }) {
 
   if (!order) return null;
 
-  return (
+  return createPortal(
     <div 
       style={{
         position: 'fixed', inset: 0,
@@ -152,6 +152,7 @@ export default function InvoiceModal({ order, onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

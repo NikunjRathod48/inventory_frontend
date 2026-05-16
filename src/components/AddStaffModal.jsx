@@ -45,7 +45,7 @@ export default function AddStaffModal({ onClose, onSave }) {
     }
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -170,7 +170,8 @@ export default function AddStaffModal({ onClose, onSave }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

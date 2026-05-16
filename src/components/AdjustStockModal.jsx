@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowRightLeft } from 'lucide-react';
 
 export default function AdjustStockModal({ product, onClose, onSave }) {
@@ -50,7 +51,7 @@ export default function AdjustStockModal({ product, onClose, onSave }) {
 
   const isAddition = ['PURCHASE', 'RETURN', 'CANCEL_ORDER'].includes(form.transactiontype);
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -181,7 +182,8 @@ export default function AdjustStockModal({ product, onClose, onSave }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

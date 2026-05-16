@@ -24,7 +24,7 @@ export default function UpdateThresholdModal({ product, currentThreshold, onClos
     }
   };
 
-  return (
+  return createPortal(
     <div 
       onClick={onClose}
       style={{
@@ -94,6 +94,7 @@ export default function UpdateThresholdModal({ product, currentThreshold, onClos
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
